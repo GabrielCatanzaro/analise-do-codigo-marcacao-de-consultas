@@ -1,3 +1,5 @@
+
+// Importação de dependências, hooks e componentes visuais
 import React from 'react';
 import styled from 'styled-components/native';
 import { Button, ListItem } from 'react-native-elements';
@@ -9,14 +11,23 @@ import theme from '../styles/theme';
 import Header from '../components/Header';
 import { ViewStyle } from 'react-native';
 
+
+// Tipagem das props de navegação (não utilizada diretamente)
 type ProfileScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Profile'>;
 };
 
+
+// Tela de perfil do usuário, exibe dados pessoais e opções de ação
 const ProfileScreen: React.FC = () => {
+  // Obtém dados do usuário autenticado e função de logout
   const { user, signOut } = useAuth();
+  // Hook de navegação para redirecionar entre telas
   const navigation = useNavigation<ProfileScreenProps['navigation']>();
 
+  /**
+   * Retorna texto amigável para o tipo de usuário
+   */
   const getRoleText = (role: string) => {
     switch (role) {
       case 'admin':
@@ -30,25 +41,37 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  /**
+   * Renderização principal da tela de perfil
+   * Exibe dados do usuário, botões de ação e navegação
+   */
   return (
     <Container>
+      {/* Cabeçalho da tela */}
       <Header />
       <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Título */}
         <Title>Meu Perfil</Title>
 
+        {/* Card com dados do usuário */}
         <ProfileCard>
+          {/* Foto do usuário */}
           <Avatar source={{ uri: user?.image || 'https://via.placeholder.com/150' }} />
+          {/* Nome do usuário */}
           <Name>{user?.name}</Name>
+          {/* Email do usuário */}
           <Email>{user?.email}</Email>
+          {/* Badge do tipo de usuário */}
           <RoleBadge role={user?.role || ''}>
             <RoleText>{getRoleText(user?.role || '')}</RoleText>
           </RoleBadge>
-          
+          {/* Exibe especialidade se for médico */}
           {user?.role === 'doctor' && (
             <SpecialtyText>Especialidade: {user?.specialty}</SpecialtyText>
           )}
         </ProfileCard>
 
+        {/* Botão para editar perfil */}
         <Button
           title="Editar Perfil"
           onPress={() => navigation.navigate('EditProfile' as any)}
@@ -56,6 +79,7 @@ const ProfileScreen: React.FC = () => {
           buttonStyle={styles.editButton}
         />
 
+        {/* Botão para voltar */}
         <Button
           title="Voltar"
           onPress={() => navigation.goBack()}
@@ -63,6 +87,7 @@ const ProfileScreen: React.FC = () => {
           buttonStyle={styles.buttonStyle}
         />
 
+        {/* Botão para logout */}
         <Button
           title="Sair"
           onPress={signOut}
@@ -74,37 +99,43 @@ const ProfileScreen: React.FC = () => {
   );
 };
 
+
+// Estilos dos componentes visuais
 const styles = {
   scrollContent: {
-    padding: 20,
+    padding: 20, // Espaçamento interno do ScrollView
   },
   button: {
     marginBottom: 20,
     width: '100%',
   },
   buttonStyle: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary, // Cor principal
     paddingVertical: 12,
   },
   editButton: {
-    backgroundColor: theme.colors.success,
+    backgroundColor: theme.colors.success, // Cor de sucesso
     paddingVertical: 12,
   },
   logoutButton: {
-    backgroundColor: theme.colors.error,
+    backgroundColor: theme.colors.error, // Cor de erro
     paddingVertical: 12,
   },
 };
 
+
+// Container principal da tela de perfil
 const Container = styled.View`
   flex: 1;
   background-color: ${theme.colors.background};
 `;
 
+// ScrollView para conteúdo da tela
 const ScrollView = styled.ScrollView`
   flex: 1;
 `;
 
+// Título da tela
 const Title = styled.Text`
   font-size: 24px;
   font-weight: bold;
@@ -113,6 +144,7 @@ const Title = styled.Text`
   text-align: center;
 `;
 
+// Card visual com dados do usuário
 const ProfileCard = styled.View`
   background-color: ${theme.colors.background};
   border-radius: 8px;
@@ -123,6 +155,7 @@ const ProfileCard = styled.View`
   border-color: ${theme.colors.border};
 `;
 
+// Foto do usuário
 const Avatar = styled.Image`
   width: 120px;
   height: 120px;
@@ -130,6 +163,7 @@ const Avatar = styled.Image`
   margin-bottom: 16px;
 `;
 
+// Nome do usuário
 const Name = styled.Text`
   font-size: 20px;
   font-weight: bold;
@@ -137,12 +171,14 @@ const Name = styled.Text`
   margin-bottom: 8px;
 `;
 
+// Email do usuário
 const Email = styled.Text`
   font-size: 16px;
   color: ${theme.colors.text};
   margin-bottom: 8px;
 `;
 
+// Badge visual do tipo de usuário
 const RoleBadge = styled.View<{ role: string }>`
   background-color: ${(props: { role: string }) => {
     switch (props.role) {
@@ -159,16 +195,19 @@ const RoleBadge = styled.View<{ role: string }>`
   margin-bottom: 8px;
 `;
 
+// Texto do tipo de usuário
 const RoleText = styled.Text`
   color: ${theme.colors.text};
   font-size: 14px;
   font-weight: 500;
 `;
 
+// Texto da especialidade do médico
 const SpecialtyText = styled.Text`
   font-size: 16px;
   color: ${theme.colors.text};
   margin-top: 8px;
 `;
 
+// Exporta o componente principal da tela de perfil
 export default ProfileScreen;
