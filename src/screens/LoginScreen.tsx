@@ -1,3 +1,5 @@
+
+// Importação de dependências e componentes visuais
 import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import { Input, Button, Text } from 'react-native-elements';
@@ -8,34 +10,51 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 
+
+// Tipagem das props de navegação (não utilizada diretamente)
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
 };
 
+
+// Tela de login do app, responsável pela autenticação do usuário
 const LoginScreen: React.FC = () => {
+  // Obtém função de autenticação do contexto
   const { signIn } = useAuth();
+  // Hook de navegação para redirecionar entre telas
   const navigation = useNavigation<LoginScreenProps['navigation']>();
+  // Estado para armazenar o email digitado
   const [email, setEmail] = useState('');
+  // Estado para armazenar a senha digitada
   const [password, setPassword] = useState('');
+  // Estado para controlar o carregamento do botão
   const [loading, setLoading] = useState(false);
+  // Estado para exibir mensagens de erro
   const [error, setError] = useState('');
 
+  /**
+   * Função chamada ao pressionar o botão "Entrar"
+   * Realiza autenticação e trata erros
+   */
   const handleLogin = async () => {
     try {
-      setLoading(true);
-      setError('');
-      await signIn({ email, password });
+      setLoading(true); // Inicia loading
+      setError(''); // Limpa erro anterior
+      await signIn({ email, password }); // Tenta autenticar
     } catch (err) {
-      setError('Email ou senha inválidos');
+      setError('Email ou senha inválidos'); // Exibe erro se falhar
     } finally {
-      setLoading(false);
+      setLoading(false); // Finaliza loading
     }
   };
 
+  // Renderização da interface de login
   return (
     <Container>
+      {/* Título do app */}
       <Title>App Marcação de Consultas</Title>
       
+      {/* Campo de email */}
       <Input
         placeholder="Email"
         value={email}
@@ -45,6 +64,7 @@ const LoginScreen: React.FC = () => {
         containerStyle={styles.input}
       />
 
+      {/* Campo de senha */}
       <Input
         placeholder="Senha"
         value={password}
@@ -53,8 +73,10 @@ const LoginScreen: React.FC = () => {
         containerStyle={styles.input}
       />
 
+      {/* Exibe mensagem de erro se houver */}
       {error ? <ErrorText>{error}</ErrorText> : null}
 
+      {/* Botão para autenticar */}
       <Button
         title="Entrar"
         onPress={handleLogin}
@@ -63,6 +85,7 @@ const LoginScreen: React.FC = () => {
         buttonStyle={styles.buttonStyle}
       />
 
+      {/* Botão para navegar para tela de cadastro */}
       <Button
         title="Cadastrar Novo Paciente"
         onPress={() => navigation.navigate('Register')}
@@ -70,27 +93,30 @@ const LoginScreen: React.FC = () => {
         buttonStyle={styles.registerButtonStyle}
       />
 
+      {/* Dica de credenciais de exemplo para testes */}
       <Text style={styles.hint}>
         Use as credenciais de exemplo:
       </Text>
       <Text style={styles.credentials}>
-        Admin: admin@example.com / 123456{'\n'}
+        Admin: admin@example.com / 123456{'
+
         Médicos: joao@example.com, maria@example.com, pedro@example.com / 123456
       </Text>
     </Container>
   );
 };
 
+// Estilos dos componentes visuais
 const styles = {
   input: {
-    marginBottom: 15,
+    marginBottom: 15, // Espaçamento entre campos
   },
   button: {
     marginTop: 10,
-    width: '100%',
+    width: '100%', // Botão ocupa toda largura
   },
   buttonStyle: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary, // Cor principal
     paddingVertical: 12,
   },
   registerButton: {
@@ -98,7 +124,7 @@ const styles = {
     width: '100%',
   },
   registerButtonStyle: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: theme.colors.secondary, // Cor secundária
     paddingVertical: 12,
   },
   hint: {
@@ -114,6 +140,8 @@ const styles = {
   },
 };
 
+
+// Container principal da tela de login
 const Container = styled.View`
   flex: 1;
   padding: 20px;
@@ -121,6 +149,7 @@ const Container = styled.View`
   background-color: ${theme.colors.background};
 `;
 
+// Título do app
 const Title = styled.Text`
   font-size: 24px;
   font-weight: bold;
@@ -129,10 +158,12 @@ const Title = styled.Text`
   color: ${theme.colors.text};
 `;
 
+// Texto de erro exibido em caso de falha no login
 const ErrorText = styled.Text`
   color: ${theme.colors.error};
   text-align: center;
   margin-bottom: 10px;
 `;
 
+// Exporta o componente principal da tela de login
 export default LoginScreen; 
