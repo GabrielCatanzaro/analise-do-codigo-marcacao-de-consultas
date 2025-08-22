@@ -266,4 +266,4 @@ const EmptyText = styled.Text`
 // Texto exibido quando não há consultas agendadas
 
 export default HomeScreen;
-// Exporta o
+// Exporta o componente principal da tela

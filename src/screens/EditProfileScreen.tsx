@@ -18,20 +18,24 @@ const EditProfileScreen: React.FC = () => {
   const { user, updateUser } = useAuth();
   const navigation = useNavigation<EditProfileScreenProps['navigation']>();
   
+  // Estados para os campos do perfil
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [specialty, setSpecialty] = useState(user?.specialty || '');
   const [loading, setLoading] = useState(false);
 
+  // Função principal: valida, atualiza contexto e salva no AsyncStorage
   const handleSaveProfile = async () => {
     try {
       setLoading(true);
 
+      // Validação dos campos obrigatórios
       if (!name.trim() || !email.trim()) {
         Alert.alert('Erro', 'Nome e email são obrigatórios');
         return;
       }
 
+      // Monta objeto atualizado
       const updatedUser = {
         ...user!,
         name: name.trim(),
@@ -64,8 +68,10 @@ const EditProfileScreen: React.FC = () => {
         <Title>Editar Perfil</Title>
 
         <ProfileCard>
+          {/* Avatar do usuário */}
           <Avatar source={{ uri: user?.image || 'https://via.placeholder.com/150' }} />
           
+          {/* Campo para nome */}
           <Input
             label="Nome"
             value={name}
@@ -74,6 +80,7 @@ const EditProfileScreen: React.FC = () => {
             placeholder="Digite seu nome"
           />
 
+          {/* Campo para email */}
           <Input
             label="Email"
             value={email}
@@ -84,6 +91,7 @@ const EditProfileScreen: React.FC = () => {
             autoCapitalize="none"
           />
 
+          {/* Campo para especialidade, se for médico */}
           {user?.role === 'doctor' && (
             <Input
               label="Especialidade"
@@ -94,11 +102,13 @@ const EditProfileScreen: React.FC = () => {
             />
           )}
 
+          {/* Exibe o papel do usuário */}
           <RoleBadge role={user?.role || ''}>
             <RoleText>{user?.role === 'admin' ? 'Administrador' : user?.role === 'doctor' ? 'Médico' : 'Paciente'}</RoleText>
           </RoleBadge>
         </ProfileCard>
 
+        {/* Botão para salvar alterações */}
         <Button
           title="Salvar Alterações"
           onPress={handleSaveProfile}
@@ -107,6 +117,7 @@ const EditProfileScreen: React.FC = () => {
           buttonStyle={styles.saveButton}
         />
 
+        {/* Botão para cancelar e voltar */}
         <Button
           title="Cancelar"
           onPress={() => navigation.goBack()}
