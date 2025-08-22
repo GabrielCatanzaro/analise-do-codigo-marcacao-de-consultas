@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+// Tela de agendamento de consulta: permite ao paciente escolher data, horário e médico.
+
 import styled from 'styled-components/native';
 import { ScrollView, ViewStyle } from 'react-native';
 import { Button, Input } from 'react-native-elements';
@@ -73,27 +75,30 @@ const availableDoctors: Doctor[] = [
 const CreateAppointmentScreen: React.FC = () => {
   const { user } = useAuth();
   const navigation = useNavigation<CreateAppointmentScreenProps['navigation']>();
+  // Estados para data, horário, médico selecionado, loading e erro.
   const [date, setDate] = useState('');
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Função principal: valida dados, cria consulta, salva e notifica o médico.
   const handleCreateAppointment = async () => {
     try {
       setLoading(true);
       setError('');
 
+      // Validação dos campos obrigatórios.
       if (!date || !selectedTime || !selectedDoctor) {
         setError('Por favor, preencha a data e selecione um médico e horário');
         return;
       }
 
-      // Recupera consultas existentes
+      // Recupera consultas existentes do armazenamento local.
       const storedAppointments = await AsyncStorage.getItem('@MedicalApp:appointments');
       const appointments: Appointment[] = storedAppointments ? JSON.parse(storedAppointments) : [];
 
-      // Cria nova consulta
+      // Cria nova consulta com os dados informados.
       const newAppointment: Appointment = {
         id: Date.now().toString(),
         patientId: user?.id || '',
@@ -106,13 +111,11 @@ const CreateAppointmentScreen: React.FC = () => {
         status: 'pending',
       };
 
-      // Adiciona nova consulta à lista
+      // Adiciona nova consulta à lista e salva.
       appointments.push(newAppointment);
-
-      // Salva lista atualizada
       await AsyncStorage.setItem('@MedicalApp:appointments', JSON.stringify(appointments));
 
-      // Envia notificação para o médico
+      // Notifica o médico sobre o novo agendamento.
       await notificationService.notifyNewAppointment(selectedDoctor.id, newAppointment);
 
       alert('Consulta agendada com sucesso!');
@@ -130,6 +133,7 @@ const CreateAppointmentScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Title>Agendar Consulta</Title>
 
+        {/* Campo para data da consulta */}
         <Input
           placeholder="Data (DD/MM/AAAA)"
           value={date}
@@ -138,12 +142,14 @@ const CreateAppointmentScreen: React.FC = () => {
           keyboardType="numeric"
         />
 
+        {/* Seleção de horário */}
         <SectionTitle>Selecione um Horário</SectionTitle>
         <TimeSlotList
           onSelectTime={setSelectedTime}
           selectedTime={selectedTime}
         />
 
+        {/* Seleção de médico */}
         <SectionTitle>Selecione um Médico</SectionTitle>
         <DoctorList
           doctors={availableDoctors}
@@ -151,8 +157,10 @@ const CreateAppointmentScreen: React.FC = () => {
           selectedDoctorId={selectedDoctor?.id}
         />
 
+        {/* Exibe erro se houver */}
         {error ? <ErrorText>{error}</ErrorText> : null}
 
+        {/* Botão para agendar consulta */}
         <Button
           title="Agendar"
           onPress={handleCreateAppointment}
@@ -161,6 +169,7 @@ const CreateAppointmentScreen: React.FC = () => {
           buttonStyle={styles.buttonStyle}
         />
 
+        {/* Botão para cancelar e voltar */}
         <Button
           title="Cancelar"
           onPress={() => navigation.goBack()}

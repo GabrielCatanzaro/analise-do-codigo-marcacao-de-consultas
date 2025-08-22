@@ -15,6 +15,7 @@ import { statisticsService, Statistics } from '../services/statistics';
 import { notificationService } from '../services/notifications';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Tipagem das props e dados usados na tela
 type DoctorDashboardScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'DoctorDashboard'>;
 };
@@ -35,6 +36,7 @@ interface StyledProps {
   status: string;
 }
 
+// Funções utilitárias para cor e texto do status da consulta
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'confirmed':
@@ -57,6 +59,7 @@ const getStatusText = (status: string) => {
   }
 };
 
+// Componente principal do dashboard do médico
 const DoctorDashboardScreen: React.FC = () => {
   const { user, signOut } = useAuth();
   const navigation = useNavigation<DoctorDashboardScreenProps['navigation']>();
@@ -67,6 +70,7 @@ const DoctorDashboardScreen: React.FC = () => {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
   const [actionType, setActionType] = useState<'confirm' | 'cancel'>('confirm');
 
+  // Carrega consultas do médico e estatísticas ao abrir/focar a tela
   const loadAppointments = async () => {
     try {
       const storedAppointments = await AsyncStorage.getItem('@MedicalApp:appointments');
@@ -77,8 +81,6 @@ const DoctorDashboardScreen: React.FC = () => {
         );
         setAppointments(doctorAppointments);
       }
-
-      // Carrega estatísticas do médico
       if (user?.id) {
         const stats = await statisticsService.getDoctorStatistics(user.id);
         setStatistics(stats);
@@ -90,20 +92,22 @@ const DoctorDashboardScreen: React.FC = () => {
     }
   };
 
+  // Abre modal para confirmar ou cancelar consulta
   const handleOpenModal = (appointment: Appointment, action: 'confirm' | 'cancel') => {
     setSelectedAppointment(appointment);
     setActionType(action);
     setModalVisible(true);
   };
 
+  // Fecha modal de ação
   const handleCloseModal = () => {
     setModalVisible(false);
     setSelectedAppointment(null);
   };
 
+  // Confirma ou cancela consulta e notifica paciente
   const handleConfirmAction = async (reason?: string) => {
     if (!selectedAppointment) return;
-
     try {
       const storedAppointments = await AsyncStorage.getItem('@MedicalApp:appointments');
       if (storedAppointments) {
@@ -120,7 +124,7 @@ const DoctorDashboardScreen: React.FC = () => {
         });
         await AsyncStorage.setItem('@MedicalApp:appointments', JSON.stringify(updatedAppointments));
 
-        // Envia notificação para o paciente
+        // Notifica paciente sobre a ação
         if (actionType === 'confirm') {
           await notificationService.notifyAppointmentConfirmed(
             selectedAppointment.patientId,
@@ -133,15 +137,14 @@ const DoctorDashboardScreen: React.FC = () => {
             reason
           );
         }
-
-        loadAppointments(); // Recarrega a lista
+        loadAppointments();
       }
     } catch (error) {
       console.error('Erro ao atualizar status:', error);
     }
   };
 
-  // Carrega as consultas quando a tela estiver em foco
+  // Atualiza dados sempre que a tela recebe foco
   useFocusEffect(
     React.useCallback(() => {
       loadAppointments();
@@ -154,13 +157,13 @@ const DoctorDashboardScreen: React.FC = () => {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <Title>Minhas Consultas</Title>
 
+        {/* Botões para acessar perfil e configurações */}
         <Button
           title="Meu Perfil"
           onPress={() => navigation.navigate('Profile')}
           containerStyle={styles.button as ViewStyle}
           buttonStyle={styles.buttonStyle}
         />
-
         <Button
           title="Configurações"
           onPress={() => navigation.navigate('Settings')}
@@ -168,6 +171,7 @@ const DoctorDashboardScreen: React.FC = () => {
           buttonStyle={styles.settingsButton}
         />
 
+        {/* Estatísticas do médico */}
         <SectionTitle>Minhas Estatísticas</SectionTitle>
         {statistics && (
           <StatisticsGrid>
@@ -198,6 +202,7 @@ const DoctorDashboardScreen: React.FC = () => {
           </StatisticsGrid>
         )}
 
+        {/* Lista de consultas do médico */}
         <SectionTitle>Minhas Consultas</SectionTitle>
         {loading ? (
           <LoadingText>Carregando consultas...</LoadingText>
@@ -242,6 +247,7 @@ const DoctorDashboardScreen: React.FC = () => {
           ))
         )}
 
+        {/* Botão para sair do sistema */}
         <Button
           title="Sair"
           onPress={signOut}
@@ -249,6 +255,7 @@ const DoctorDashboardScreen: React.FC = () => {
           buttonStyle={styles.logoutButton}
         />
 
+        {/* Modal para confirmar/cancelar consulta */}
         {selectedAppointment && (
           <AppointmentActionModal
             visible={modalVisible}
@@ -269,6 +276,7 @@ const DoctorDashboardScreen: React.FC = () => {
   );
 };
 
+// Estilos dos componentes visuais
 const styles = {
   scrollContent: {
     padding: 20,
@@ -389,4 +397,4 @@ const StatisticsGrid = styled.View`
   margin-bottom: 20px;
 `;
 
-export default DoctorDashboardScreen; 
+export default DoctorDashboardScreen;
