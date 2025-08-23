@@ -1,9 +1,13 @@
+
+// Importação de dependências, hooks e componentes visuais
 import React from 'react';
 import styled from 'styled-components/native';
 import { ViewStyle } from 'react-native';
 import { Card, Text, Avatar } from 'react-native-elements';
 import theme from '../styles/theme';
 
+
+// Tipagem das props do card de consulta
 interface AppointmentCardProps {
   doctorName: string;
   date: string;
@@ -14,6 +18,8 @@ interface AppointmentCardProps {
   style?: ViewStyle;
 }
 
+
+// Card visual para exibir informações de uma consulta
 const AppointmentCard: React.FC<AppointmentCardProps> = ({
   doctorName,
   date,
@@ -23,6 +29,9 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   onPress,
   style,
 }) => {
+  /**
+   * Retorna cor do status da consulta
+   */
   const getStatusColor = () => {
     switch (status) {
       case 'confirmed':
@@ -34,9 +43,14 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
     }
   };
 
+  /**
+   * Renderização principal do card de consulta
+   * Exibe informações do médico, data/hora, especialidade e status
+   */
   return (
     <Card containerStyle={[styles.card, style]}>
       <CardContent>
+        {/* Informações do médico */}
         <DoctorInfo>
           <Avatar
             size="medium"
@@ -50,6 +64,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           </TextContainer>
         </DoctorInfo>
 
+        {/* Informações de data/hora da consulta */}
         <AppointmentInfo>
           <InfoRow>
             <InfoLabel>Data:</InfoLabel>
@@ -61,6 +76,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
           </InfoRow>
         </AppointmentInfo>
 
+        {/* Status visual da consulta */}
         <StatusContainer>
           <StatusDot color={getStatusColor()} />
           <StatusText color={getStatusColor()}>
@@ -72,9 +88,11 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   );
 };
 
+
+// Estilos dos componentes visuais do card
 const styles = {
   card: {
-    borderRadius: 10,
+    borderRadius: 10, // Borda arredondada do card
     marginHorizontal: 0,
     marginVertical: 8,
     padding: 15,
@@ -85,64 +103,76 @@ const styles = {
     shadowRadius: 3.84,
   },
   avatar: {
-    backgroundColor: theme.colors.primary,
+    backgroundColor: theme.colors.primary, // Cor de fundo do avatar
   },
 };
 
+
+// Container do conteúdo do card
 const CardContent = styled.View`
   padding: 10px;
 `;
 
+// Informações do médico
 const DoctorInfo = styled.View`
   flex-direction: row;
   align-items: center;
   margin-bottom: 15px;
 `;
 
+// Container dos textos do médico
 const TextContainer = styled.View`
   margin-left: 15px;
 `;
 
+// Nome do médico
 const DoctorName = styled.Text`
   font-size: 18px;
   font-weight: bold;
   color: ${theme.colors.text};
 `;
 
+// Especialidade do médico
 const Specialty = styled.Text`
   font-size: 14px;
   color: ${theme.colors.text};
   opacity: 0.7;
 `;
 
+// Informações de data/hora da consulta
 const AppointmentInfo = styled.View`
   margin-bottom: 15px;
 `;
 
+// Linha de informação
 const InfoRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  marginBottom: 5px;
+  margin-bottom: 5px;
 `;
 
+// Label de informação
 const InfoLabel = styled.Text`
   font-size: 14px;
   color: ${theme.colors.text};
   opacity: 0.7;
 `;
 
+// Valor de informação
 const InfoValue = styled.Text`
   font-size: 14px;
   color: ${theme.colors.text};
   font-weight: 500;
 `;
 
+// Container do status visual
 const StatusContainer = styled.View`
   flex-direction: row;
   align-items: center;
   margin-top: 10px;
 `;
 
+// Ponto colorido do status
 const StatusDot = styled.View<{ color: string }>`
   width: 8px;
   height: 8px;
@@ -151,10 +181,12 @@ const StatusDot = styled.View<{ color: string }>`
   margin-right: 8px;
 `;
 
+// Texto do status
 const StatusText = styled.Text<{ color: string }>`
   font-size: 14px;
   color: ${props => props.color};
   font-weight: 500;
 `;
 
+// Exporta o componente principal do card de consulta
 export default AppointmentCard; 

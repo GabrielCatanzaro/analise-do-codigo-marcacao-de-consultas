@@ -1,9 +1,13 @@
+
+// Importação de dependências, hooks e componentes visuais
 import React from 'react';
 import styled from 'styled-components/native';
 import { Modal, ViewStyle } from 'react-native';
 import { Button, Input } from 'react-native-elements';
 import theme from '../styles/theme';
 
+
+// Tipagem das props do modal de ação de consulta
 interface AppointmentActionModalProps {
   visible: boolean;
   onClose: () => void;
@@ -18,6 +22,8 @@ interface AppointmentActionModalProps {
   };
 }
 
+
+// Modal para confirmar ou cancelar uma consulta, exibindo detalhes e motivo
 const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
   visible,
   onClose,
@@ -25,21 +31,33 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
   actionType,
   appointmentDetails,
 }) => {
+  // Estado para armazenar motivo do cancelamento
   const [reason, setReason] = React.useState('');
 
+  /**
+   * Confirma ação (cancelar ou confirmar) e fecha modal
+   */
   const handleConfirm = () => {
     onConfirm(reason.trim() || undefined);
     setReason('');
     onClose();
   };
 
+  /**
+   * Fecha modal e limpa motivo
+   */
   const handleClose = () => {
     setReason('');
     onClose();
   };
 
+  // Verifica se ação é cancelamento
   const isCancel = actionType === 'cancel';
 
+  /**
+   * Renderização principal do modal de ação de consulta
+   * Exibe detalhes da consulta, campo de motivo (se cancelamento) e botões de ação
+   */
   return (
     <Modal
       visible={visible}
@@ -49,13 +67,16 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
     >
       <Overlay>
         <ModalContainer>
+          {/* Cabeçalho do modal */}
           <Header>
             <Title>
               {isCancel ? 'Cancelar Consulta' : 'Confirmar Consulta'}
             </Title>
           </Header>
 
+          {/* Conteúdo principal do modal */}
           <Content>
+            {/* Informações da consulta */}
             <AppointmentInfo>
               <InfoRow>
                 <InfoLabel>Paciente:</InfoLabel>
@@ -75,6 +96,7 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
               </InfoRow>
             </AppointmentInfo>
 
+            {/* Campo de motivo do cancelamento, se aplicável */}
             {isCancel && (
               <ReasonContainer>
                 <Input
@@ -89,6 +111,7 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
               </ReasonContainer>
             )}
 
+            {/* Texto de confirmação da ação */}
             <ConfirmationText isCancel={isCancel}>
               {isCancel 
                 ? 'Tem certeza que deseja cancelar esta consulta?'
@@ -97,6 +120,7 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
             </ConfirmationText>
           </Content>
 
+          {/* Botões de ação do modal */}
           <ButtonContainer>
             <Button
               title="Cancelar"
@@ -120,9 +144,11 @@ const AppointmentActionModal: React.FC<AppointmentActionModalProps> = ({
   );
 };
 
+
+// Estilos dos componentes visuais do modal
 const styles = {
   reasonInput: {
-    marginBottom: 10,
+    marginBottom: 10, // Espaçamento abaixo do campo motivo
   },
   cancelButton: {
     flex: 1,
@@ -133,7 +159,7 @@ const styles = {
     marginLeft: 8,
   },
   cancelButtonStyle: {
-    backgroundColor: theme.colors.secondary,
+    backgroundColor: theme.colors.secondary, // Cor do botão cancelar
     paddingVertical: 12,
   },
   confirmButtonStyle: {
@@ -141,6 +167,8 @@ const styles = {
   },
 };
 
+
+// Overlay escurecido do modal
 const Overlay = styled.View`
   flex: 1;
   background-color: rgba(0, 0, 0, 0.5);
@@ -149,6 +177,7 @@ const Overlay = styled.View`
   padding: 20px;
 `;
 
+// Container principal do modal
 const ModalContainer = styled.View`
   background-color: ${theme.colors.white};
   border-radius: 12px;
@@ -161,12 +190,14 @@ const ModalContainer = styled.View`
   elevation: 5;
 `;
 
+// Cabeçalho do modal
 const Header = styled.View`
   padding: 20px 20px 10px 20px;
   border-bottom-width: 1px;
   border-bottom-color: ${theme.colors.border};
 `;
 
+// Título do modal
 const Title = styled.Text`
   font-size: 20px;
   font-weight: bold;
@@ -174,10 +205,12 @@ const Title = styled.Text`
   text-align: center;
 `;
 
+// Conteúdo principal do modal
 const Content = styled.View`
   padding: 20px;
 `;
 
+// Informações da consulta
 const AppointmentInfo = styled.View`
   background-color: ${theme.colors.background};
   border-radius: 8px;
@@ -185,18 +218,21 @@ const AppointmentInfo = styled.View`
   margin-bottom: 16px;
 `;
 
+// Linha de informação
 const InfoRow = styled.View`
   flex-direction: row;
   justify-content: space-between;
   margin-bottom: 8px;
 `;
 
+// Label de informação
 const InfoLabel = styled.Text`
   font-size: 14px;
   color: ${theme.colors.text};
   font-weight: 500;
 `;
 
+// Valor de informação
 const InfoValue = styled.Text`
   font-size: 14px;
   color: ${theme.colors.text};
@@ -205,10 +241,12 @@ const InfoValue = styled.Text`
   text-align: right;
 `;
 
+// Container do campo motivo
 const ReasonContainer = styled.View`
   margin-bottom: 16px;
 `;
 
+// Texto de confirmação da ação
 const ConfirmationText = styled.Text<{ isCancel: boolean }>`
   font-size: 16px;
   color: ${(props: { isCancel: boolean }) => props.isCancel ? theme.colors.error : theme.colors.success};
@@ -217,9 +255,11 @@ const ConfirmationText = styled.Text<{ isCancel: boolean }>`
   font-weight: 500;
 `;
 
+// Container dos botões de ação
 const ButtonContainer = styled.View`
   flex-direction: row;
   padding: 0 20px 20px 20px;
 `;
 
+// Exporta o componente principal do modal de ação de consulta
 export default AppointmentActionModal;
