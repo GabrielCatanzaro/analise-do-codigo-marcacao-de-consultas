@@ -98,9 +98,7 @@ const LoginScreen: React.FC = () => {
         Use as credenciais de exemplo:
       </Text>
       <Text style={styles.credentials}>
-        Admin: admin@example.com / 123456{'
-
-        Médicos: joao@example.com, maria@example.com, pedro@example.com / 123456
+        Admin: admin@example.com / 123456{'Médicos: joao@example.com, maria@example.com, pedro@example.com / 123456'}
       </Text>
     </Container>
   );
