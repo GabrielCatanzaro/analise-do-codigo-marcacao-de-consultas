@@ -17,31 +17,36 @@ import PatientDashboardScreen from '../screens/PatientDashboardScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import SettingsScreen from '../screens/SettingsScreen';
 
+// Instancia o stack navigator tipado
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
+// Componente principal responsável por gerenciar as rotas do app
 export const AppNavigator: React.FC = () => {
+  // Obtém usuário e estado de carregamento do contexto de autenticação
   const { user, loading } = useAuth();
 
+  // Exibe nada (ou um loading) enquanto verifica autenticação
   if (loading) {
     return null; // Ou um componente de loading
   }
 
+  // Renderiza a navegação principal
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
-          headerShown: false,
+          headerShown: false, // Esconde o cabeçalho padrão
         }}
       >
+        {/* Se não houver usuário, mostra rotas públicas */}
         {!user ? (
-          // Rotas públicas
           <>
             <Stack.Screen name="Login" component={LoginScreen} />
             <Stack.Screen name="Register" component={RegisterScreen} />
           </>
         ) : (
-          // Rotas protegidas
           <>
+            {/* Rotas específicas por tipo de usuário */}
             {user.role === 'admin' && (
               <Stack.Screen 
                 name="AdminDashboard" 
@@ -49,7 +54,6 @@ export const AppNavigator: React.FC = () => {
                 options={{ title: 'Painel Administrativo' }}
               />
             )}
-            
             {user.role === 'doctor' && (
               <Stack.Screen 
                 name="DoctorDashboard" 
@@ -57,7 +61,6 @@ export const AppNavigator: React.FC = () => {
                 options={{ title: 'Painel do Médico' }}
               />
             )}
-            
             {user.role === 'patient' && (
               <Stack.Screen 
                 name="PatientDashboard" 
@@ -65,7 +68,6 @@ export const AppNavigator: React.FC = () => {
                 options={{ title: 'Painel do Paciente' }}
               />
             )}
-
             {/* Rotas comuns para todos os usuários autenticados */}
             <Stack.Screen 
               name="Home" 
@@ -102,4 +104,5 @@ export const AppNavigator: React.FC = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-}; 
+};
+// Exporta o AppNavigator para uso na raiz do app
